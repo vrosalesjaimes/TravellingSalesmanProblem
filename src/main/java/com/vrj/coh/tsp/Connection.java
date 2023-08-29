@@ -23,13 +23,4 @@ public class Connection {
 
     /* Distance between two cities */
     private Double distance;
-    
-    /**
-     * Calculate the distance between two cities.
-     * @return the distance between two cities.
-     */
-    public double calculateDistance(City city1, City city2){
-        return this.distance;
-    }
-
 }
