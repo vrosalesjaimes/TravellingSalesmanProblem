@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "cities")
 @Data
@@ -27,4 +29,8 @@ public class City {
     private double latitude;
     /* Longitude of the city. */
     private double longitude;
+
+    /* Connections with the city. */
+    @ManyToMany(mappedBy = "city1")
+    private Set<Connection> connections;
 }
