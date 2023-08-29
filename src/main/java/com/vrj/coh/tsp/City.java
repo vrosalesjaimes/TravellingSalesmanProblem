@@ -30,7 +30,6 @@ public class City {
     /* Longitude of the city. */
     private double longitude;
 
-    /* Connections with the city. */
-    @ManyToMany(mappedBy = "city1")
+    @OneToMany(mappedBy = "city1")
     private Set<Connection> connections;
 }
