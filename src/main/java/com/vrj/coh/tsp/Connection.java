@@ -1,9 +1,11 @@
 package com.vrj.coh.tsp;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "connections")
+@Data
 public class Connection {
     @Id
     @ManyToOne

@@ -32,4 +32,8 @@ public class City {
 
     @OneToMany(mappedBy = "city1")
     private Set<Connection> connections;
+
+    public double calculateDistance(City city){
+        return 1.0;
+    }
 }
