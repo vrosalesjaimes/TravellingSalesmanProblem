@@ -30,10 +30,10 @@ public class City {
     /* Longitude of the city. */
     private double longitude;
 
-    @OneToMany(mappedBy = "city1")
+    @OneToMany(mappedBy = "city1", fetch = FetchType.EAGER)
     private Set<Connection> connections;
 
-    public double calculateDistance(City city){
+    public double calculateNaturalDistance(City city){
         return 1.0;
     }
 }

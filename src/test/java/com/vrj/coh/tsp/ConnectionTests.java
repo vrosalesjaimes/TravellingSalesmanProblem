@@ -98,7 +98,7 @@ public class ConnectionTests {
     public void testCalculateDistance() {
         City city1 = connection.getCity1();
         City city2 = connection.getCity2();
-        double calculatedDistance = city1.calculateDistance(city2);
+        double calculatedDistance = city1.calculateNaturalDistance(city2);
         Assert.assertTrue(calculatedDistance >= 0.0);
     }
 
