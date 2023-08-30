@@ -23,8 +23,8 @@ public class CityTests {
 
     @Before
     public void setUp() {
-        String name = generateRandomName();
-        String country = "Country " + random.nextInt(100);
+        String name = generateRandomCityName();
+        String country = generateRandomCountry();
         int population = random.nextInt(1000000);
         double latitude = random.nextDouble();
         double longitude = random.nextDouble();
@@ -39,7 +39,7 @@ public class CityTests {
 
     @Test
     public void testSetName() {
-        String newName = "New Name";
+        String newName = "New City Name";
         city.setName(newName);
         Assert.assertEquals(newName, city.getName());
     }
@@ -96,20 +96,23 @@ public class CityTests {
         Assert.assertEquals(newLongitude, city.getLongitude(), 0.0001);
     }
 
-    private String generateRandomName() {
-        int n = random.nextInt(NAMES.length);
-        int ap = random.nextInt(LAST_NAMES.length);
-        int am = random.nextInt(LAST_NAMES.length);
-        return NAMES[n] + " " + LAST_NAMES[ap] + " " + LAST_NAMES[am];
+    private String generateRandomCityName() {
+        int n = random.nextInt(CITY_NAMES.length);
+        return CITY_NAMES[n];
     }
 
-    private static final String[] NAMES = {
-            "José Arcadio", "Úrsula", "Aureliano", "Amaranta", "Rebeca",
-            "Remedios", "Aureliano José", "Gerinaldo", "Mauricio", "Petra"
+    private String generateRandomCountry() {
+        int c = random.nextInt(COUNTRIES.length);
+        return COUNTRIES[c];
+    }
+
+    private static final String[] CITY_NAMES = {
+            "New York", "Tokyo", "Paris", "London", "Berlin",
+            "Sydney", "Rome", "Beijing", "Moscow", "Rio de Janeiro"
     };
 
-    private static final String[] LAST_NAMES = {
-            "Buendía", "Iguarán", "Cotes", "Ternera", "Moscote",
-            "Brown", "Carpio", "Piedad", "Crespi", "Babilonia"
+    private static final String[] COUNTRIES = {
+            "United States", "Japan", "France", "United Kingdom", "Germany",
+            "Australia", "Italy", "China", "Russia", "Brazil"
     };
 }
