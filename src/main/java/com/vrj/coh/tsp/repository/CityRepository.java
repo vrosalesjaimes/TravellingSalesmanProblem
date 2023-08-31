@@ -1,6 +1,6 @@
 package com.vrj.coh.tsp.repository;
 
-import com.vrj.coh.tsp.City;
+import com.vrj.coh.tsp.model.City;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,6 +1,9 @@
 package com.vrj.coh.tsp;
 
 import java.util.Random;
+
+import com.vrj.coh.tsp.model.City;
+import com.vrj.coh.tsp.model.Connection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
