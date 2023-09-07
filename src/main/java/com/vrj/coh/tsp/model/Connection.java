@@ -7,12 +7,15 @@ import lombok.Data;
 @Table(name = "connections")
 @Data
 public class Connection {
-    @Id
+    @EmbeddedId
+    private ConnectionId id;
+
+    @MapsId("city1")
     @ManyToOne
     @JoinColumn(name = "id_city_1")
     private City city1;
 
-    @Id
+    @MapsId("city2")
     @ManyToOne
     @JoinColumn(name = "id_city_2")
     private City city2;
