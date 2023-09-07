@@ -1,4 +1,4 @@
-package com.vrj.coh.tsp;
+package com.vrj.coh.tsp.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
