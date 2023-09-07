@@ -18,7 +18,6 @@ public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     /* The name of the city. */
     private String name;
     /* Country where the city is located. */
@@ -30,10 +29,24 @@ public class City {
     /* Longitude of the city. */
     private double longitude;
 
-    @OneToMany(mappedBy = "city1", fetch = FetchType.EAGER)
-    private Set<Connection> connections;
-
     public double calculateNaturalDistance(City city){
-        return 1.0;
+        final int RATIO = 6373000;
+
+        double latitudeRadians = this.latitude * Math.PI / 180;
+        double longitudeRadians = this.longitude * Math.PI / 180;
+        double cityLatitudeRadians = this.latitude * Math.PI / 180;
+        double cityLongitudeRadians = this.longitude * Math.PI / 180;
+
+        double senLatitude = Math.pow(Math.sin((latitudeRadians -  cityLatitudeRadians)/2), 2);
+        double senLongitude = Math.pow(Math.sin((longitudeRadians - cityLongitudeRadians)/2), 2);
+
+        double cosLatitude = Math.cos(latitudeRadians);
+        double cosCityLatitude = Math.cos(cityLatitudeRadians);
+
+        double A = senLatitude + (cosLatitude*cosCityLatitude*senLongitude);
+
+        double C = 2 * Math.atan2(Math.sqrt(A), Math.sqrt(1-A));
+
+        return RATIO * C;
     }
 }
