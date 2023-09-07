@@ -34,8 +34,8 @@ public class City {
 
         double latitudeRadians = this.latitude * Math.PI / 180;
         double longitudeRadians = this.longitude * Math.PI / 180;
-        double cityLatitudeRadians = this.latitude * Math.PI / 180;
-        double cityLongitudeRadians = this.longitude * Math.PI / 180;
+        double cityLatitudeRadians = city.latitude * Math.PI / 180;
+        double cityLongitudeRadians = city.longitude * Math.PI / 180;
 
         double senLatitude = Math.pow(Math.sin((latitudeRadians -  cityLatitudeRadians)/2), 2);
         double senLongitude = Math.pow(Math.sin((longitudeRadians - cityLongitudeRadians)/2), 2);

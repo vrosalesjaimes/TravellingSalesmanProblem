@@ -1,5 +1,7 @@
 package com.vrj.coh.tsp;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -42,7 +44,7 @@ public class CityTests {
         int population = random.nextInt(1000000);
         double latitude = random.nextDouble();
         double longitude = random.nextDouble();
-        city = new City(null, name, country, population, latitude, longitude, null);
+        city = new City(null, name, country, population, latitude, longitude);
     }
 
     @Test
@@ -116,13 +118,16 @@ public class CityTests {
         Optional<City> city = cityRepository.findById(idCity);
 
         City cityTest = null;
+        List<Connection> neighbors = new ArrayList<>();
 
-        if (city.isPresent())
+        if (city.isPresent()) {
             cityTest = city.get();
+            neighbors = cityRepository.findConnectionsByCityId(cityTest.getId());
+        }
 
         boolean isCorrectDistance = false;
 
-        for (Connection c: cityTest.getConnections()){
+        for (Connection c: neighbors){
             double  MAX_ERROR_EXPECTED = 0.99;
             double difference = Math.abs(c.getCity1().calculateNaturalDistance(c.getCity2()) - c.getDistance());
 
