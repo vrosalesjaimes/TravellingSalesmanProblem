@@ -33,7 +33,3 @@ build/
 
 # Miscellaneous
 .DS_Store
-
-# Configure
-application.yml
-application.properties
