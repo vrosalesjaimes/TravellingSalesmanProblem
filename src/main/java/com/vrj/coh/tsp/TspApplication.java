@@ -1,4 +1,4 @@
-package com.vrj.coh.tsp.model;
+package com.vrj.coh.tsp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
