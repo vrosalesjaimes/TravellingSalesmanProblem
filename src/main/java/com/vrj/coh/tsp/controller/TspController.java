@@ -20,7 +20,6 @@ public class TspController {
 
     @GetMapping("city/{id}")
     public ResponseEntity<?> getCity(@PathVariable Long id){
-        System.out.println(id);
         Optional<City> optionalCity = this.cityRepository.findById(id);
 
         City city = null;
