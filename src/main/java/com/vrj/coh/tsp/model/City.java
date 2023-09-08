@@ -49,4 +49,8 @@ public class City {
 
         return RATIO * C;
     }
+
+    public double extendedNaturalDistance(City city, double normalizer){
+        return this.calculateNaturalDistance(city) * normalizer;
+    }
 }
