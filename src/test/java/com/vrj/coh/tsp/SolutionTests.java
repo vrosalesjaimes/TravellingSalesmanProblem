@@ -2,7 +2,6 @@ package com.vrj.coh.tsp;
 
 import static org.junit.Assert.*;
 
-import com.vrj.coh.tsp.model.Solution;
 import org.junit.Before;
 import org.junit.Test;
 
