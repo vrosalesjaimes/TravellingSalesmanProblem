@@ -52,7 +52,7 @@ public class Tsp {
         City[] cities = new City[idsArrayCities.length];
 
         for(int i = 0; i < idsArrayCities.length; i++){
-            if(cityRepository.findById((long)idsArrayCities[i]).isPresent());
+            if(cityRepository.findById((long)idsArrayCities[i]).isPresent())
                 cities[i] = cityRepository.findById((long)idsArrayCities[i]).get();
         }
 
@@ -61,7 +61,6 @@ public class Tsp {
 
     /**
      * Converts an array of cities to one of city ids.
-     * @param citiesArray array of cities.
      * @return array of city ids.
      */
     public int[] toArrayInteger(){
@@ -158,6 +157,8 @@ public class Tsp {
         City aux = citiesPath[index1];
         citiesPath[index1] = citiesPath[index2];
         citiesPath[index2] = aux;
+
+        modifyCostFunction(index1, index2);
     }
 
     /**
@@ -173,4 +174,14 @@ public class Tsp {
         }
     }
 
+    public Tsp copy(){
+        Tsp tsp = new Tsp(toArrayInteger());
+        tsp.setAdjacencyMatrix(this.adjacencyMatrix);
+        tsp.setCitiesPath(this.citiesPath);
+        tsp.setNormalizer(this.normalizer);
+        tsp.setCost(this.cost);
+        tsp.setSolution(this.solution);
+        tsp.setMaximum(this.maximum);
+        return tsp;
+    }
 }
