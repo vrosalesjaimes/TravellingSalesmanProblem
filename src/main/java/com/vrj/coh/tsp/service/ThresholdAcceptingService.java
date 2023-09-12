@@ -1,10 +1,28 @@
 package com.vrj.coh.tsp.service;
 
 import com.vrj.coh.tsp.Tsp;
+
+import java.util.Random;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public class ThresholdAcceptingService {
+
+    public static int[] permutarArreglo(int[] arreglo, long semilla) {
+        int n = arreglo.length;
+        int[] permutacion = arreglo.clone();
+        Random rand = new Random(semilla);
+
+        for (int i = n - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            int temp = permutacion[i];
+            permutacion[i] = permutacion[j];
+            permutacion[j] = temp;
+        }
+
+        return permutacion;
+    }
 
     public Object[] calculaLote(double temperature, Tsp tsp){
         int c = 0;

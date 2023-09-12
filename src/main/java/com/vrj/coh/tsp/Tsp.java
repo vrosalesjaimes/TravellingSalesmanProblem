@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vrj.coh.tsp.model.City;
 import com.vrj.coh.tsp.repository.CityRepository;
+import com.vrj.coh.tsp.repository.ConnectionRepository;
 
 import lombok.Data;
 
@@ -32,11 +33,13 @@ public class Tsp {
 
     @Autowired
     private CityRepository cityRepository;
+    @Autowired
+    private ConnectionRepository connectionRepository;
 
      /* Initializes an object of type tsp. */
     public Tsp(int[] idsCitiesPath){
-        this.adjacencyMatrix = new Double[MAX_CITIES][MAX_CITIES];
         this.citiesPath = toArrayCities(idsCitiesPath);
+        this.adjacencyMatrix = fillAdjacencyMatrix();
         this.normalizer = 0;
         this.cost = 0;
         this.solution = null;
@@ -164,9 +167,9 @@ public class Tsp {
     /**
      * Replaces null entries with 0 in the adjacency matrix.
      */
-    public void completeAdjacencyMatrix(){
-        for(int i = 0; i < citiesPath.length; i++){
-            for(int j = 0; j < citiesPath.length; j++){
+    public void completeAdjacencyMatrix(Double[][] adjacencyMatrix){
+        for(int i = 0; i < MAX_CITIES+1; i++){
+            for(int j = 0; j < MAX_CITIES+1; j++){
                 if(adjacencyMatrix[i][j] == null){
                     adjacencyMatrix[i][j] = 0.0;
                 }
@@ -183,5 +186,31 @@ public class Tsp {
         tsp.setSolution(this.solution);
         tsp.setMaximum(this.maximum);
         return tsp;
+    }
+
+    public Double[][] fillAdjacencyMatrix(){
+        Double[][] adjacencyMatrix = new Double[MAX_CITIES+1][MAX_CITIES+1];
+        for(int i = 0; i < citiesPath.length; i++){
+            for(int j = 0; j < citiesPath.length; j++){
+                int id1 = citiesPath[i].getId().intValue();
+                int id2 = citiesPath[j].getId().intValue();
+
+                if(i != j){
+                    if(connectionRepository.findByCity1AndCity2(citiesPath[i], citiesPath[j]).isPresent()){
+                        double distance = connectionRepository.findByCity1AndCity2(citiesPath[i], citiesPath[j]).get().getDistance();
+                        adjacencyMatrix[id1][id2] = distance;
+                        adjacencyMatrix[id2][id1] = distance;
+                    } else{
+                        double distance = connectionRepository.findByCity1AndCity2(citiesPath[j], citiesPath[i]).get().getDistance();
+                        adjacencyMatrix[id1][id2] = distance;
+                        adjacencyMatrix[id2][id1] = distance;
+                    }
+
+                }
+            }
+        }
+
+        completeAdjacencyMatrix(adjacencyMatrix);
+        return adjacencyMatrix;
     }
 }
