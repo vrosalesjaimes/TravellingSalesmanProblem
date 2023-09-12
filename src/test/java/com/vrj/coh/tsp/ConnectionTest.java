@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ConnectionTests {
+public class ConnectionTest {
 
     @Rule public Timeout expiracion = Timeout.seconds(5);
 

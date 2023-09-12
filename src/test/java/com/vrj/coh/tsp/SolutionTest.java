@@ -13,7 +13,7 @@ import java.util.Random;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SolutionTests {
+public class SolutionTest {
 
     private Random random;
     private Solution solution;
