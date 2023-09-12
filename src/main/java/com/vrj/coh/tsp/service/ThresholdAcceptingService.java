@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ThresholdAcceptingService {
 
-    public static int[] permutarArreglo(int[] arreglo, long semilla) {
+    public static int[] permutarArreglo(int[] arreglo, int semilla) {
         int n = arreglo.length;
         int[] permutacion = arreglo.clone();
         Random rand = new Random(semilla);
@@ -119,5 +119,19 @@ public class ThresholdAcceptingService {
             return busquedaBinaria(tsp, t1, t, P, epsilonP);
         else
             return busquedaBinaria(tsp, t, t2, P, epsilonP);
+    }
+
+    public String main(int[] idCitiesPath, int semilla, 
+                        int temperaturaInicial, double epsilon, 
+                        double epsilonP, double phi){
+        int[] permutacion = permutarArreglo(idCitiesPath, semilla);
+        
+        Tsp tsp = new Tsp(permutacion);
+
+        double T = temperaturaInicial(tsp, temperaturaInicial, phi, epsilonP);
+
+        aceptacionPorUmbrales(T, tsp, epsilon, phi);
+
+        return tsp.toString();
     }
 }
