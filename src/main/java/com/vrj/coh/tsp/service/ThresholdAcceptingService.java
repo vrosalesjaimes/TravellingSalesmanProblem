@@ -36,19 +36,17 @@ public class ThresholdAcceptingService {
     public Object[] calculaLote(double temperature, Tsp tsp){
         int c = 0;
         double r = 0.0;
-        int L = 2000;
+        int L = 100;
         while (c < L){
             Tsp aux = tsp.copy();
             aux.swap();
 
-            if(aux.getCost() < tsp.getCost()){
+            if(aux.getCost() < tsp.getCost() + temperature){
                 tsp = aux;
                 c++;
                 r += tsp.getCost();
             }
         }
-
-        System.out.println(tsp.getCost());
         Object[] result = {tsp, r/L};
 
         return result;
@@ -66,6 +64,7 @@ public class ThresholdAcceptingService {
             }
 
             temperature = phi * temperature;
+            System.out.println("Temperatura APU " + temperature);
         }
     }
 
@@ -94,19 +93,21 @@ public class ThresholdAcceptingService {
             T2 = 2 * T;
         }
 
+        System.out.println("Busqueda binaria");
+
         return busquedaBinaria(tsp, T1, T2, P, epsilonP);
     }
 
     public double porcentajeAceptados(Tsp tsp, double temperature){
         int c = 0;
-        int N = 1000;
+        int N = 5;
 
         for(int i = 0; i < N; i++){
             Tsp aux = tsp.copy();
 
             aux.swap();
 
-            if(aux.getCost() < tsp.getCost()){
+            if(aux.getCost() < tsp.getCost() + temperature){
                 c++;
                 tsp = aux;
             }

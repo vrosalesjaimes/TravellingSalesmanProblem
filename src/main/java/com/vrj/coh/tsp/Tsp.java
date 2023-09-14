@@ -7,9 +7,9 @@ import com.vrj.coh.tsp.repository.ConnectionRepository;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -90,14 +90,9 @@ public class Tsp {
         for(int i = 0; i < citiesPath.length; i++){
             for(int j = 0; j < citiesPath.length; j++){
                 Optional<Connection> optionalConnection = connectionRepository.findByCity1AndCity2(citiesPath[i], citiesPath[j]);
-                Optional<Connection> optionalConnection2 = connectionRepository.findByCity1AndCity2(citiesPath[j], citiesPath[i]);
                 
                 if(optionalConnection.isPresent()){
                     distances.add(optionalConnection.get().getDistance());
-                }
-
-                if(optionalConnection2.isPresent()){
-                    distances.add(optionalConnection2.get().getDistance());
                 }
             }
         }
@@ -111,13 +106,12 @@ public class Tsp {
     public void calculeteNormalizer(){
         List<Double> distances = getDistances();
 
-        Comparator<Double> comparator = Collections.reverseOrder();
-        Collections.sort(distances, comparator);
+        Collections.sort(distances, Collections.reverseOrder());
 
         for(int i = 0; i < citiesPath.length - 1; i++){
             this.normalizer += distances.get(i);
         }
-        System.out.println("Normalizador: " + this.normalizer);
+        System.out.println("Normalizador: " + (new BigDecimal(this.normalizer)).toPlainString());
         calculateMaximum(distances);
     }
 
