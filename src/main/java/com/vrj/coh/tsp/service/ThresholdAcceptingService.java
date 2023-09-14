@@ -1,13 +1,22 @@
 package com.vrj.coh.tsp.service;
 
 import com.vrj.coh.tsp.Tsp;
+import com.vrj.coh.tsp.repository.CityRepository;
+import com.vrj.coh.tsp.repository.ConnectionRepository;
 
 import java.util.Random;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ThresholdAcceptingService {
+
+    @Autowired
+    private CityRepository cityRepository;
+
+    @Autowired
+    private ConnectionRepository connectionRepository;
 
     public static int[] permutarArreglo(int[] arreglo, int semilla) {
         int n = arreglo.length;
@@ -39,6 +48,7 @@ public class ThresholdAcceptingService {
             }
         }
 
+        System.out.println(tsp.getCost());
         Object[] result = {tsp, r/L};
 
         return result;
@@ -60,7 +70,9 @@ public class ThresholdAcceptingService {
     }
 
     public double temperaturaInicial(Tsp tsp, double T, double P, double epsilonP){
+        System.out.println("Temperatura inicial");
         double p = porcentajeAceptados(tsp, T);
+        System.out.println("Porcentaje aceptados");
         double T1, T2 = 0;
 
 
@@ -93,6 +105,7 @@ public class ThresholdAcceptingService {
 
         for(int i = 0; i < N; i++){
             Tsp aux = tsp.copy();
+
             aux.swap();
 
             if(aux.getCost() < tsp.getCost()){
@@ -125,8 +138,8 @@ public class ThresholdAcceptingService {
                         int temperaturaInicial, double epsilon, 
                         double epsilonP, double phi){
         int[] permutacion = permutarArreglo(idCitiesPath, semilla);
-        
-        Tsp tsp = new Tsp(permutacion);
+
+        Tsp tsp = new Tsp(permutacion, cityRepository, connectionRepository);
 
         double T = temperaturaInicial(tsp, temperaturaInicial, phi, epsilonP);
 
