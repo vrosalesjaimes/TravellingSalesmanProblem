@@ -1,9 +1,11 @@
 package com.vrj.coh.tsp.service;
 
+import com.vrj.coh.tsp.LoteResponse;
 import com.vrj.coh.tsp.Tsp;
 import com.vrj.coh.tsp.repository.CityRepository;
 import com.vrj.coh.tsp.repository.ConnectionRepository;
 
+import java.math.BigDecimal;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class ThresholdAcceptingService {
         return permutacion;
     }
 
-    public Object[] calculaLote(double temperature, Tsp tsp){
+    public LoteResponse calculaLote(double temperature, Tsp tsp){
         int c = 0;
         double r = 0.0;
         int L = 100;
@@ -45,27 +47,30 @@ public class ThresholdAcceptingService {
                 tsp = aux;
                 c++;
                 r += tsp.getCost();
+                System.out.println("R lote response: " +(new BigDecimal(r)).toPlainString());
             }
         }
-        Object[] result = {tsp, r/L};
 
-        return result;
+        return new LoteResponse(r, tsp);
     }
 
     public void aceptacionPorUmbrales(double temperature, Tsp tsp, double epsilon, double phi){
         double p = 0.0;
-
+        LoteResponse minSolution = null;
         while (temperature > epsilon){
             double q = Double.MAX_VALUE;
             
             while (p <= q ){
                 q = p;
-                Object[] lot = calculaLote(temperature, tsp);
+                minSolution = calculaLote(temperature, tsp);
+                p  = minSolution.getPromedio();
+                System.out.println("p: " + (new BigDecimal(p)).toPlainString() + " q:" + (new BigDecimal(q)).toPlainString());
             }
 
             temperature = phi * temperature;
             System.out.println("Temperatura APU " + temperature);
         }
+        System.out.println("Solucion: " + minSolution.getTsp().getCost());
     }
 
     public double temperaturaInicial(Tsp tsp, double T, double P, double epsilonP){
@@ -93,7 +98,6 @@ public class ThresholdAcceptingService {
             T2 = 2 * T;
         }
 
-        System.out.println("Busqueda binaria");
 
         return busquedaBinaria(tsp, T1, T2, P, epsilonP);
     }
