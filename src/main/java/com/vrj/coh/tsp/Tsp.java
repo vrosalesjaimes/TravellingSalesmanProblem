@@ -1,7 +1,5 @@
 package com.vrj.coh.tsp;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vrj.coh.tsp.model.City;
 import com.vrj.coh.tsp.model.Connection;
 import com.vrj.coh.tsp.repository.CityRepository;

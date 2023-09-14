@@ -70,9 +70,7 @@ public class ThresholdAcceptingService {
     }
 
     public double temperaturaInicial(Tsp tsp, double T, double P, double epsilonP){
-        System.out.println("Temperatura inicial");
         double p = porcentajeAceptados(tsp, T);
-        System.out.println("Porcentaje aceptados");
         double T1, T2 = 0;
 
 
@@ -142,6 +140,8 @@ public class ThresholdAcceptingService {
         Tsp tsp = new Tsp(permutacion, cityRepository, connectionRepository);
 
         double T = temperaturaInicial(tsp, temperaturaInicial, phi, epsilonP);
+
+        System.out.println("Temperatura inicial calculada: " + T);
 
         aceptacionPorUmbrales(T, tsp, epsilon, phi);
 
