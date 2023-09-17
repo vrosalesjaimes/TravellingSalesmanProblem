@@ -27,7 +27,7 @@ public class Solution {
     /* Sum of the k-1 heaviest edges assuming that there are k cities. */
     private double normalizer;
     /* Cost of the path. */
-    private double cost;
+    private Cost cost;
     /* Maximum distance between a pair of cities */
     private double maximum;
     /* Indicates if the solution is feasible. */
@@ -42,7 +42,7 @@ public class Solution {
     public Solution(int[] idsCitiesPath){
         this.citiesPath = toArrayCities(idsCitiesPath);
         this.normalizer = 0;
-        this.cost = 0;
+        this.cost = null;
         this.maximum = 0;
         this.adjacencyMatrix = fillAdjacencyMatrix();
         this.feasible = false;
@@ -117,14 +117,14 @@ public class Solution {
      * Calculate the cost of the path.
      */
     public void costFunction(){
-        double sum = 0.0;
+        BigDecimal sum = BigDecimal.ZERO;
         int n = citiesPath.length - 1;
 
         for (int i = 0; i < n; i++) {
-            sum += adjacencyMatrix[citiesPath[i].getId()][citiesPath[i + 1].getId()];
+            sum = sum.add( new BigDecimal(adjacencyMatrix[citiesPath[i].getId()][citiesPath[i + 1].getId()]));
         }
 
-        this.cost = sum / normalizer;
+        this.cost = new Cost(sum, this.normalizer);
     }
     
     public void isFeasible(){
@@ -140,16 +140,57 @@ public class Solution {
         int index1 = random.nextInt(citiesPath.length);
         int index2 = random.nextInt(citiesPath.length);
 
-        if(index1 == index2){
+        while (index1 == index2){
             index2 = random.nextInt(citiesPath.length);
         }
-
+        
         City aux = this.citiesPath[index1];
         this.citiesPath[index1] = this.citiesPath[index2];
         this.citiesPath[index2] = aux;
 
         this.costFunction();
+
     }
+    
+    public void modifyCost(int i, int j) {
+        int n = citiesPath.length - 1;
+        City[] path = citiesPath;
+    
+        BigDecimal newCost = this.cost.getSum();
+    
+        if (Math.abs(i - j) == 1) {
+            int ii = Math.min(i, j);
+            int jj = Math.max(i, j);
+            if (ii != 0) {
+                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[ii - 1].getId()][path[ii].getId()]));
+                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[ii - 1].getId()][path[jj].getId()]));
+            }
+            if (jj != n) {
+                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[jj].getId()][path[jj + 1].getId()]));
+                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[ii].getId()][path[jj + 1].getId()]));
+            }
+        } else {
+            if (i != 0) {
+                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[i - 1].getId()][path[i].getId()]));
+                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[i - 1].getId()][path[j].getId()]));
+            }
+            if (i != n) {
+                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[i].getId()][path[i + 1].getId()]));
+                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[j].getId()][path[i + 1].getId()]));
+            }
+            if (j != 0) {
+                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[j - 1].getId()][path[j].getId()]));
+                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[j - 1].getId()][path[i].getId()]));
+            }
+            if (j != n) {
+                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[j].getId()][path[j + 1].getId()]));
+                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[i].getId()][path[j + 1].getId()]));
+            }
+        }
+    
+        this.cost.setSum(newCost);
+    }
+    
     
 
     /**
@@ -189,8 +230,13 @@ public class Solution {
                         double distance = findByCity1AndCity2(citiesPath[i], citiesPath[j]).getDistance();
                         adjacencyMatrix[id1][id2] = distance;
                         adjacencyMatrix[id2][id1] = distance;
-                    } else{
-                        double distance = citiesPath[i].extendedNaturalDistance(citiesPath[j], this.maximum);
+                    } 
+                    else if(findByCity1AndCity2(citiesPath[j], citiesPath[i]) != null){
+                        double distance = findByCity1AndCity2(citiesPath[j], citiesPath[i]).getDistance();
+                        adjacencyMatrix[id1][id2] = distance;
+                        adjacencyMatrix[id2][id1] = distance;
+                    }else{
+                        double distance = citiesPath[i].extendedNaturalDistance(citiesPath[j], this.normalizer);
                         adjacencyMatrix[id1][id2] = distance;
                         adjacencyMatrix[id2][id1] = distance;
                     }
@@ -204,16 +250,17 @@ public class Solution {
 
     @Override
     public String toString() {
-        String citiesPathString = Arrays.toString(citiesPath)
+        String citiesPathString = Arrays.toString(toArrayInteger())
                 .replace("[", "")
                 .replace("]", "")
                 .replace(" ", "");
-        BigDecimal costBigDecimal = BigDecimal.valueOf(cost); 
+
+        BigDecimal costBigDecimal = cost.getCost(); 
         BigDecimal normalizerBigDecimal = BigDecimal.valueOf(normalizer); 
         String feasibleString = feasible ? "Yes" : "No";
 
-        return "Path: " + citiesPathString + ", Maximun: " + maximum + "Normalizer: " + normalizerBigDecimal.toPlainString() +
-               ", Evaluation: " + costBigDecimal.toPlainString() + ", Feasible: " + feasibleString;
+        return "Path: " + citiesPathString + "\n Maximun: " + maximum + "\n Normalizer: " + normalizerBigDecimal.toPlainString() +
+               "\n Evaluation: " + costBigDecimal.toPlainString() + "\n Feasible: " + feasibleString;
 
     }
 }

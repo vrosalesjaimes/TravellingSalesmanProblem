@@ -49,8 +49,8 @@ public class City {
         return RATIO * C;
     }
 
-    public double extendedNaturalDistance(City city, double maximum){
-        return this.calculateNaturalDistance(city) * maximum;
+    public double extendedNaturalDistance(City city, double normalizer){
+        return this.calculateNaturalDistance(city) * normalizer;
     }
 
     public static City findById(int id){
