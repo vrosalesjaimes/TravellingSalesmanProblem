@@ -1,0 +1,5 @@
+Path: 14,9,19,1,7
+Maximun: 2999396.23
+Normalizer: 10740808.4
+Evaluation: 0.721884149800121162060847105519209
+Feasible: Yes
