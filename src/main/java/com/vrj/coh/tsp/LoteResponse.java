@@ -1,24 +1,11 @@
 package com.vrj.coh.tsp;
 
-<<<<<<< HEAD
-=======
 import java.math.BigDecimal;
 
->>>>>>> test
 import lombok.Data;
 
 @Data
 public class LoteResponse {
-<<<<<<< HEAD
-    private double promedio;
-    private Tsp tsp;
-
-    public LoteResponse(double promedio, Tsp tsp) {
-        this.promedio = promedio;
-        this.tsp = tsp;
-    }
-}
-=======
     private BigDecimal promedio;
     private Solution solution;
 
@@ -27,4 +14,3 @@ public class LoteResponse {
         this.solution = tsp;
     }
 }
->>>>>>> test
