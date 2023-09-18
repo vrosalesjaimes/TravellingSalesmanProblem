@@ -125,10 +125,14 @@ public class Solution {
         }
 
         this.cost = new Cost(sum, this.normalizer);
+        this.isFeasible();
     }
     
     public void isFeasible(){
-
+        if(this.cost.getCost().compareTo(BigDecimal.valueOf(1)) < 0)
+            this.feasible = true;
+        else
+            this.feasible = false;
     }
     
 
@@ -259,8 +263,8 @@ public class Solution {
         BigDecimal normalizerBigDecimal = BigDecimal.valueOf(normalizer); 
         String feasibleString = feasible ? "Yes" : "No";
 
-        return "Path: " + citiesPathString + "\n Maximun: " + maximum + "\n Normalizer: " + normalizerBigDecimal.toPlainString() +
-               "\n Evaluation: " + costBigDecimal.toPlainString() + "\n Feasible: " + feasibleString;
+        return "Path: " + citiesPathString + "\nMaximun: " + maximum + "\nNormalizer: " + normalizerBigDecimal.toPlainString() +
+               "\nEvaluation: " + costBigDecimal.toPlainString() + "\nFeasible: " + feasibleString;
 
     }
 }

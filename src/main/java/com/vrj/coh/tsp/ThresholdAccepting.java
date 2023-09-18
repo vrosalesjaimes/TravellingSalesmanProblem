@@ -61,7 +61,7 @@ public class ThresholdAccepting {
         return new LoteResponse(r.divide(new BigDecimal(L)), solution);
     }
 
-    public static void aceptacionPorUmbrales(double temperature, Solution solution){
+    public static Solution aceptacionPorUmbrales(double temperature, Solution solution){
         BigDecimal p = BigDecimal.ZERO;
 
         LoteResponse minSolution = null;
@@ -81,6 +81,7 @@ public class ThresholdAccepting {
                 q = p;
                 minSolution = calculaLote(temperature, solution);
                 i++;
+                if (minSolution.getSolution() != null){}
                 p  = minSolution.getPromedio();
                 solution = minSolution.getSolution();
             }
@@ -91,7 +92,7 @@ public class ThresholdAccepting {
             System.out.println(String.format("Lote: %4d      Cost: %40s      Temperature: %40s     Feasible: %b", 
             i, costo, temperatura, solution.getFeasible()));
         }
-        System.out.println("Solucion: " + minSolution.getSolution().getCost());
+        return solution;
     }
 
     public static double temperaturaInicial(Solution solution, double T, double P){
@@ -184,7 +185,7 @@ public class ThresholdAccepting {
 
             System.out.println("Temperatura inicial calculada: " + (new BigDecimal(T)).toPlainString());
             System.out.println("------------------------------ Inicia heuristica -----------------------");
-            aceptacionPorUmbrales(T, tsp);
+            tsp = aceptacionPorUmbrales(T, tsp);
 
             String tspString = tsp.toString();
 

@@ -1,5 +1,5 @@
-Path: 19,7,9,14,1
- Maximun: 2999396.23
- Normalizer: 10740808.4
- Evaluation: 5298191.8201812971976829664686159372182
- Feasible: No
+Path: 14,9,19,1,7
+Maximun: 2999396.23
+Normalizer: 10740808.4
+Evaluation: 0.721884149800121162060847105519209
+Feasible: Yes
