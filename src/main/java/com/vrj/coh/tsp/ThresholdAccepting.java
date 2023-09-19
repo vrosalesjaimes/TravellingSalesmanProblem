@@ -12,12 +12,12 @@ import java.util.Random;
 
 public class ThresholdAccepting {
 
-    private static int SEMILLA = 1; 
+    private static Integer SEMILLA = null; 
     private final static int TEMPERATURA_INICIAL = 1000;
-    private final static double EPSILONP = 0.00001;
+    private final static double EPSILONP = 0.1;
     private final static double EPSILON = 0.00001;
-    private final static double PHI = 0.99;
-    private final static double P = 0.95;
+    private final static double PHI = 0.9;
+    private final static double P = 0.9;
 
     public static int[] permutarArreglo(int[] arreglo) {
         int n = arreglo.length;
@@ -39,7 +39,7 @@ public class ThresholdAccepting {
         int c = 0;
         BigDecimal r = BigDecimal.ZERO;
         BigDecimal temperatureDecimal = new BigDecimal(temperature);
-        int L = 2000;
+        int L = 200;
         int limit = 0;
 
         while (c < L){
@@ -54,7 +54,7 @@ public class ThresholdAccepting {
             }
 
             limit++;
-            if (limit > 20000){
+            if (limit > 2000){
                 break;
             }
         }
@@ -76,17 +76,16 @@ public class ThresholdAccepting {
         while (temperature > EPSILON){
 
             BigDecimal q = BigDecimal.valueOf(Double.MAX_VALUE);
-            
             while (p.compareTo(q) <= 0){
                 q = p;
                 minSolution = calculaLote(temperature, solution);
-                i++;
-                if (minSolution.getSolution() != null){}
-                p  = minSolution.getPromedio();
-                solution = minSolution.getSolution();
+                if (minSolution.getSolution() != null){
+                    p  = minSolution.getPromedio();
+                    solution = minSolution.getSolution();
+                }
             }
             temperature = PHI * temperature;
-
+            i++;
             costo = String.format("%20.20f", solution.getCost().getCost());
             temperatura = String.format("%20.20f", (new BigDecimal(temperature)));
             System.out.println(String.format("Lote: %4d      Cost: %40s      Temperature: %40s     Feasible: %b", 
@@ -126,7 +125,7 @@ public class ThresholdAccepting {
 
     public static double porcentajeAceptados(Solution solution, double temperature){
         int c = 0;
-        int N = 2000;
+        int N = 200;
 
         BigDecimal temperatureDecimal = new BigDecimal(temperature);
 
@@ -179,7 +178,7 @@ public class ThresholdAccepting {
 
             long startTime = System.currentTimeMillis();
             int[] permutacion = permutarArreglo(idCitiesPath);
-            Solution tsp = new Solution(permutacion);
+            Solution tsp = new Solution(permutacion, SEMILLA);
 
             double T = temperaturaInicial(tsp, TEMPERATURA_INICIAL, P);
 

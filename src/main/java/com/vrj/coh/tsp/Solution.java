@@ -33,13 +33,15 @@ public class Solution {
     /* Indicates if the solution is feasible. */
     private boolean feasible;
 
+    private static Random random;
+
 
     public boolean getFeasible(){
         return this.feasible;
     }
 
      /* Initializes an object of type solution. */
-    public Solution(int[] idsCitiesPath){
+    public Solution(int[] idsCitiesPath, long seed){
         this.citiesPath = toArrayCities(idsCitiesPath);
         this.normalizer = 0;
         this.cost = null;
@@ -47,6 +49,7 @@ public class Solution {
         this.adjacencyMatrix = fillAdjacencyMatrix();
         this.feasible = false;
         this.costFunction();
+        random = new Random(seed);
     }
 
     /**
@@ -140,7 +143,6 @@ public class Solution {
      * Swap two cities in citiesPath.
      */
     public void swap(){
-        Random random = new Random();
         int index1 = random.nextInt(citiesPath.length);
         int index2 = random.nextInt(citiesPath.length);
 
@@ -153,14 +155,14 @@ public class Solution {
         this.citiesPath[index2] = aux;
 
         this.costFunction();
-
+        
     }
     
-    public void modifyCost(int i, int j) {
+    public BigDecimal modifyCost(int i, int j) {
         int n = citiesPath.length - 1;
         City[] path = citiesPath;
     
-        BigDecimal newCost = this.cost.getSum();
+        BigDecimal newCost = BigDecimal.ZERO;
     
         if (Math.abs(i - j) == 1) {
             int ii = Math.min(i, j);
@@ -191,8 +193,8 @@ public class Solution {
                 newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[i].getId()][path[j + 1].getId()]));
             }
         }
-    
-        this.cost.setSum(newCost);
+        
+        return newCost;
     }
     
     
@@ -213,7 +215,7 @@ public class Solution {
     public Solution copy(){
         Solution solution = new Solution();
         solution.setAdjacencyMatrix(this.adjacencyMatrix);
-        solution.setCitiesPath(this.citiesPath);
+        solution.setCitiesPath(this.citiesPath.clone());
         solution.setNormalizer(this.normalizer);
         solution.setCost(this.cost);
         solution.setMaximum(this.maximum);
@@ -240,7 +242,7 @@ public class Solution {
                         adjacencyMatrix[id1][id2] = distance;
                         adjacencyMatrix[id2][id1] = distance;
                     }else{
-                        double distance = citiesPath[i].extendedNaturalDistance(citiesPath[j], this.normalizer);
+                        double distance = citiesPath[i].extendedNaturalDistance(citiesPath[j], this.maximum);
                         adjacencyMatrix[id1][id2] = distance;
                         adjacencyMatrix[id2][id1] = distance;
                     }

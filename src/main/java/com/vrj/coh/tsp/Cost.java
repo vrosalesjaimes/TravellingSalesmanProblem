@@ -17,4 +17,8 @@ public class Cost {
     public BigDecimal getCost(){
         return this.sum.divide(new BigDecimal(this.normalizer), RoundingMode.HALF_UP);
     }
+
+    public void sum(BigDecimal suma){
+        this.sum = this.sum.add(suma);
+    }
 }
