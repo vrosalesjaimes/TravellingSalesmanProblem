@@ -2,20 +2,20 @@
 
 # Nombre del archivo JAR y la entrada
 JAR_FILE="target/TravellingSalesmanProblem-jar-with-dependencies.jar"
-INPUT_FILE="inputs/input-40.tsp"
+INPUT_FILE="inputs/input-150.tsp"
 
 # Rango de semillas que deseas probar
 SEMILLA_INICIAL=1
-SEMILLA_FINAL=100000
+SEMILLA_FINAL=1000
 
 # Nombre del archivo de salida
-OUTPUT_FILE="salida9.csv"
+OUTPUT_FILE="salida9-150.csv"
 
 # Función para ejecutar el comando con timeout y registro
 execute_with_timeout() {
     semilla="$1"
     comando="java -jar \"$JAR_FILE\" \"$INPUT_FILE\" \"$semilla\""
-    timeout 3m java -jar "$JAR_FILE" "$INPUT_FILE" "$semilla" 2>&1 | tee -a "$OUTPUT_FILE"
+    timeout 10m java -jar "$JAR_FILE" "$INPUT_FILE" "$semilla" 2>&1 | tee -a "$OUTPUT_FILE"
     echo "------------------------------------"
 }
 
