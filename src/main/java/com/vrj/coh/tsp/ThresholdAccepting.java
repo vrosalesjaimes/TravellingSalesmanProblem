@@ -13,11 +13,12 @@ import java.util.Random;
 public class ThresholdAccepting {
 
     private static Integer SEMILLA = null; 
-    private final static int TEMPERATURA_INICIAL = 1000;
+    private final static int TEMPERATURA_INICIAL = 1;
     private final static double EPSILONP = 0.1;
     private final static double EPSILON = 0.0001;
     private final static double PHI = 0.9;
-    private final static double P = 0.9;
+    private final static double P = 0.85;
+    private static Solution bestSolution = null;
 
     public static int[] permutarArreglo(int[] arreglo) {
         int n = arreglo.length;
@@ -37,20 +38,21 @@ public class ThresholdAccepting {
     public static LoteResponse calculaLote(double temperature, Solution solution){
 
         int c = 0;
-        BigDecimal r = BigDecimal.ZERO;
-        BigDecimal temperatureDecimal = new BigDecimal(temperature);
-        int L = 200;
+        double r = 0.0;
+        int L = 2000;
         int limit = 0;
+        double anteriorCosto = 0;
 
         while (c < L){
 
-            Solution aux = solution.copy();
-            aux.swap();
+            anteriorCosto = solution.getCost().getCost();
+            solution.swap();
 
-            if(aux.getCost().getCost().compareTo(solution.getCost().getCost().add(temperatureDecimal)) < 0){
-                solution = aux;
+            if(solution.getCost().getCost() < anteriorCosto + temperature ){
                 c++;
-                r = r.add(solution.getCost().getCost());
+                r += solution.getCost().getCost();
+            } else{
+                solution.unSwap();
             }
 
             limit++;
@@ -58,14 +60,14 @@ public class ThresholdAccepting {
                 break;
             }
         }
-        return new LoteResponse(r.divide(new BigDecimal(L)), solution);
+        return new LoteResponse(r/L, solution);
     }
 
     public static Solution aceptacionPorUmbrales(double temperature, Solution solution){
-        BigDecimal p = BigDecimal.ZERO;
+        double p = 0.0;
 
         LoteResponse minSolution = null;
-
+        bestSolution = solution.copy();
         int i = 0;
 
         String costo = String.format("%20.20f", solution.getCost().getCost());
@@ -75,13 +77,18 @@ public class ThresholdAccepting {
 
         while (temperature > EPSILON){
 
-            BigDecimal q = BigDecimal.valueOf(Double.MAX_VALUE);
-            while (p.compareTo(q) <= 0){
+            double q = Double.MAX_VALUE;
+            while (p <= q){
                 q = p;
                 minSolution = calculaLote(temperature, solution);
                 if (minSolution.getSolution() != null){
                     p  = minSolution.getPromedio();
+
+                    if(minSolution.getSolution().getCost().getCost() < bestSolution.getCost().getCost())
+                        bestSolution = minSolution.getSolution().copy();
+
                     solution = minSolution.getSolution();
+
                 }
             }
             temperature = PHI * temperature;
@@ -91,7 +98,7 @@ public class ThresholdAccepting {
             System.out.println(String.format("Lote: %4d      Cost: %40s      Temperature: %40s     Feasible: %b", 
             i, costo, temperatura, solution.getFeasible()));
         }
-        return solution;
+        return bestSolution;
     }
 
     public static double temperaturaInicial(Solution solution, double T, double P){
@@ -125,18 +132,15 @@ public class ThresholdAccepting {
 
     public static double porcentajeAceptados(Solution solution, double temperature){
         int c = 0;
-        int N = 200;
-
-        BigDecimal temperatureDecimal = new BigDecimal(temperature);
+        int N = 10;
 
         for(int i = 0; i < N; i++){
-            Solution aux = solution.copy();
+            solution.swap();
 
-            aux.swap();
-
-            if(aux.getCost().getCost().compareTo(solution.getCost().getCost().add(temperatureDecimal)) < 0){
+            if(solution.getCost().getCost() < temperature){
                 c++;
-                solution = aux;
+            } else {
+                solution.unSwap();
             }
         }
         return c/N;
@@ -192,9 +196,9 @@ public class ThresholdAccepting {
 
             long endTime = System.currentTimeMillis();
             long elapsedTime = endTime - startTime;
-            double elapsedTimeInMinutes = (double) elapsedTime / (1000 * 60);
+            double elapsedTimeInMinutes = ((double) elapsedTime / (1000 * 60)) * 60;
 
-            System.out.println("Tiempo transcurrido: " + elapsedTimeInMinutes + " minutos");
+            System.out.println("Tiempo transcurrido: " + Math.ceil(elapsedTimeInMinutes) + " segundos");
 
             String outputFileName = "solution/solution-" + tsp.getCitiesPath().length + ".tsp";
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {

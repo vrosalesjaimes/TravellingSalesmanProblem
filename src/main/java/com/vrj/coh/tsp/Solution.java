@@ -3,7 +3,6 @@ package com.vrj.coh.tsp;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +33,8 @@ public class Solution {
     private boolean feasible;
 
     private static Random random;
+    private int index1 = 0;
+    private int index2 = 0;
 
 
     public boolean getFeasible(){
@@ -48,7 +49,6 @@ public class Solution {
         this.maximum = 0;
         this.adjacencyMatrix = fillAdjacencyMatrix();
         this.feasible = false;
-        this.costFunction();
         random = new Random(seed);
     }
 
@@ -104,7 +104,7 @@ public class Solution {
         for(int i = 0; i < citiesPath.length - 1; i++){
             this.normalizer += distances.get(i);
         }
-        //System.out.println("Normalizador: " + (new BigDecimal(this.normalizer)).toPlainString());
+        System.out.println(String.format("Normalizador: %.10f", this.normalizer));
         calculateMaximum(distances);
     }
 
@@ -113,18 +113,18 @@ public class Solution {
      */
     public void calculateMaximum(List<Double> distances){
         this.maximum = distances.get(0);
-        //System.out.println("Máximo: " + this.maximum);
+        System.out.println(String.format("Máximo: %.10f", this.maximum));
     }
     
     /**
      * Calculate the cost of the path.
      */
     public void costFunction(){
-        BigDecimal sum = BigDecimal.ZERO;
+        double sum = 0.0;
         int n = citiesPath.length - 1;
 
         for (int i = 0; i < n; i++) {
-            sum = sum.add( new BigDecimal(adjacencyMatrix[citiesPath[i].getId()][citiesPath[i + 1].getId()]));
+            sum += adjacencyMatrix[citiesPath[i].getId()][citiesPath[i + 1].getId()];
         }
 
         this.cost = new Cost(sum, this.normalizer);
@@ -132,7 +132,7 @@ public class Solution {
     }
     
     public void isFeasible(){
-        if(this.cost.getCost().compareTo(BigDecimal.valueOf(1)) < 0)
+        if(this.cost.getCost() < 1.0 )
             this.feasible = true;
         else
             this.feasible = false;
@@ -143,54 +143,61 @@ public class Solution {
      * Swap two cities in citiesPath.
      */
     public void swap(){
-        int index1 = random.nextInt(citiesPath.length);
-        int index2 = random.nextInt(citiesPath.length);
+        index1 = random.nextInt(citiesPath.length);
+        index2 = random.nextInt(citiesPath.length);
 
         while (index1 == index2){
             index2 = random.nextInt(citiesPath.length);
         }
-        
+
         City aux = this.citiesPath[index1];
         this.citiesPath[index1] = this.citiesPath[index2];
         this.citiesPath[index2] = aux;
 
         this.costFunction();
-        
+    }
+
+    public void unSwap(){
+        City aux = this.citiesPath[index1];
+        this.citiesPath[index1] = this.citiesPath[index2];
+        this.citiesPath[index2] = aux;
+
+        this.costFunction();
     }
     
-    public BigDecimal modifyCost(int i, int j) {
+    public double modifyCost(int i, int j) {
         int n = citiesPath.length - 1;
         City[] path = citiesPath;
     
-        BigDecimal newCost = BigDecimal.ZERO;
+        double newCost = 0.0;
     
         if (Math.abs(i - j) == 1) {
             int ii = Math.min(i, j);
             int jj = Math.max(i, j);
             if (ii != 0) {
-                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[ii - 1].getId()][path[ii].getId()]));
-                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[ii - 1].getId()][path[jj].getId()]));
+                newCost -= adjacencyMatrix[path[ii - 1].getId()][path[ii].getId()];
+                newCost += adjacencyMatrix[path[ii - 1].getId()][path[jj].getId()];
             }
             if (jj != n) {
-                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[jj].getId()][path[jj + 1].getId()]));
-                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[ii].getId()][path[jj + 1].getId()]));
+                newCost -= adjacencyMatrix[path[jj].getId()][path[jj + 1].getId()];
+                newCost += adjacencyMatrix[path[ii].getId()][path[jj + 1].getId()];
             }
         } else {
             if (i != 0) {
-                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[i - 1].getId()][path[i].getId()]));
-                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[i - 1].getId()][path[j].getId()]));
+                newCost -= adjacencyMatrix[path[i - 1].getId()][path[i].getId()];
+                newCost += adjacencyMatrix[path[i - 1].getId()][path[j].getId()];
             }
             if (i != n) {
-                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[i].getId()][path[i + 1].getId()]));
-                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[j].getId()][path[i + 1].getId()]));
+                newCost -= adjacencyMatrix[path[i].getId()][path[i + 1].getId()];
+                newCost += adjacencyMatrix[path[j].getId()][path[i + 1].getId()];
             }
             if (j != 0) {
-                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[j - 1].getId()][path[j].getId()]));
-                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[j - 1].getId()][path[i].getId()]));
+                newCost -= adjacencyMatrix[path[j - 1].getId()][path[j].getId()];
+                newCost += adjacencyMatrix[path[j - 1].getId()][path[i].getId()];
             }
             if (j != n) {
-                newCost = newCost.subtract(BigDecimal.valueOf(adjacencyMatrix[path[j].getId()][path[j + 1].getId()]));
-                newCost = newCost.add(BigDecimal.valueOf(adjacencyMatrix[path[i].getId()][path[j + 1].getId()]));
+                newCost -= adjacencyMatrix[path[j].getId()][path[j + 1].getId()];
+                newCost += adjacencyMatrix[path[i].getId()][path[j + 1].getId()];
             }
         }
         
@@ -219,6 +226,7 @@ public class Solution {
         solution.setNormalizer(this.normalizer);
         solution.setCost(this.cost);
         solution.setMaximum(this.maximum);
+        solution.setFeasible(feasible);
 
         return solution;
     }
@@ -261,12 +269,11 @@ public class Solution {
                 .replace("]", "")
                 .replace(" ", "");
 
-        BigDecimal costBigDecimal = cost.getCost(); 
-        BigDecimal normalizerBigDecimal = BigDecimal.valueOf(normalizer); 
+        double costdouble = cost.getCost(); 
         String feasibleString = feasible ? "Yes" : "No";
 
-        return "Path: " + citiesPathString + "\nMaximun: " + maximum + "\nNormalizer: " + normalizerBigDecimal.toPlainString() +
-               "\nEvaluation: " + costBigDecimal.toPlainString() + "\nFeasible: " + feasibleString;
+        return "Path: " + citiesPathString + "\nMaximun: " + maximum + "\nNormalizer: " + normalizer +
+               "\nEvaluation: " + costdouble + "\nFeasible: " + feasibleString;
 
     }
 }
