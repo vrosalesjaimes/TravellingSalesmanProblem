@@ -104,7 +104,7 @@ public class Solution {
         for(int i = 0; i < citiesPath.length - 1; i++){
             this.normalizer += distances.get(i);
         }
-        System.out.println("Normalizador: " + (new BigDecimal(this.normalizer)).toPlainString());
+        //System.out.println("Normalizador: " + (new BigDecimal(this.normalizer)).toPlainString());
         calculateMaximum(distances);
     }
 
@@ -113,7 +113,7 @@ public class Solution {
      */
     public void calculateMaximum(List<Double> distances){
         this.maximum = distances.get(0);
-        System.out.println("Máximo: " + this.maximum);
+        //System.out.println("Máximo: " + this.maximum);
     }
     
     /**

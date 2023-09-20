@@ -15,7 +15,7 @@ public class ThresholdAccepting {
     private static Integer SEMILLA = null; 
     private final static int TEMPERATURA_INICIAL = 1000;
     private final static double EPSILONP = 0.1;
-    private final static double EPSILON = 0.00001;
+    private final static double EPSILON = 0.0001;
     private final static double PHI = 0.9;
     private final static double P = 0.9;
 
@@ -54,7 +54,7 @@ public class ThresholdAccepting {
             }
 
             limit++;
-            if (limit > 2000){
+            if (limit > 20000){
                 break;
             }
         }
