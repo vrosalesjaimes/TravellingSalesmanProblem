@@ -50,6 +50,7 @@ public class Solution {
         this.adjacencyMatrix = fillAdjacencyMatrix();
         this.feasible = false;
         random = new Random(seed);
+        costFunction();
     }
 
     /**
@@ -104,7 +105,7 @@ public class Solution {
         for(int i = 0; i < citiesPath.length - 1; i++){
             this.normalizer += distances.get(i);
         }
-        System.out.println(String.format("Normalizador: %.10f", this.normalizer));
+        //System.out.println(String.format("Normalizador: %.10f", this.normalizer));
         calculateMaximum(distances);
     }
 
@@ -113,7 +114,7 @@ public class Solution {
      */
     public void calculateMaximum(List<Double> distances){
         this.maximum = distances.get(0);
-        System.out.println(String.format("Máximo: %.10f", this.maximum));
+        //System.out.println(String.format("Máximo: %.10f", this.maximum));
     }
     
     /**
@@ -150,19 +151,21 @@ public class Solution {
             index2 = random.nextInt(citiesPath.length);
         }
 
+        double sum = this.modifyCost(index1, index2);
         City aux = this.citiesPath[index1];
         this.citiesPath[index1] = this.citiesPath[index2];
         this.citiesPath[index2] = aux;
 
-        this.costFunction();
+        this.cost.sum(sum);
     }
 
     public void unSwap(){
+        double sum = this.modifyCost(index1, index2);
         City aux = this.citiesPath[index1];
         this.citiesPath[index1] = this.citiesPath[index2];
         this.citiesPath[index2] = aux;
 
-        this.costFunction();
+        this.cost.sum(sum);
     }
     
     public double modifyCost(int i, int j) {
@@ -200,7 +203,6 @@ public class Solution {
                 newCost += adjacencyMatrix[path[i].getId()][path[j + 1].getId()];
             }
         }
-        
         return newCost;
     }
     

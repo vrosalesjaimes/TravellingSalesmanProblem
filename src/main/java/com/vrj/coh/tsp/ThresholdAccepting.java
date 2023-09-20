@@ -72,8 +72,8 @@ public class ThresholdAccepting {
 
         String costo = String.format("%20.20f", solution.getCost().getCost());
         String temperatura = String.format("%20.20f", (new BigDecimal(temperature)));
-        System.out.println(String.format("Lote: %4d      Cost: %40s      Temperature: %40s     Feasible: %b", 
-        i, costo, temperatura, solution.getFeasible()));
+        //System.out.println(String.format("Lote: %4d      Cost: %40s      Temperature: %40s     Feasible: %b", 
+        //i, costo, temperatura, solution.getFeasible()));
 
         while (temperature > EPSILON){
 
@@ -84,19 +84,21 @@ public class ThresholdAccepting {
                 if (minSolution.getSolution() != null){
                     p  = minSolution.getPromedio();
 
-                    if(minSolution.getSolution().getCost().getCost() < bestSolution.getCost().getCost())
+                    if(minSolution.getSolution().getCost().getCost() < bestSolution.getCost().getCost()){
                         bestSolution = minSolution.getSolution().copy();
+                        bestSolution.isFeasible();
+                    }
 
                     solution = minSolution.getSolution();
-
+                    solution.isFeasible();
                 }
             }
             temperature = PHI * temperature;
             i++;
             costo = String.format("%20.20f", solution.getCost().getCost());
             temperatura = String.format("%20.20f", (new BigDecimal(temperature)));
-            System.out.println(String.format("Lote: %4d      Cost: %40s      Temperature: %40s     Feasible: %b", 
-            i, costo, temperatura, solution.getFeasible()));
+            //System.out.println(String.format("Lote: %4d      Cost: %40s      Temperature: %40s     Feasible: %b", 
+            //i, costo, temperatura, solution.getFeasible()));
         }
         return bestSolution;
     }
@@ -186,24 +188,24 @@ public class ThresholdAccepting {
 
             double T = temperaturaInicial(tsp, TEMPERATURA_INICIAL, P);
 
-            System.out.println("Temperatura inicial calculada: " + (new BigDecimal(T)).toPlainString());
-            System.out.println("------------------------------ Inicia heuristica -----------------------");
+           // System.out.println("Temperatura inicial calculada: " + (new BigDecimal(T)).toPlainString());
+            //System.out.println("------------------------------ Inicia heuristica -----------------------");
             tsp = aceptacionPorUmbrales(T, tsp);
 
             String tspString = tsp.toString();
 
-            System.out.println(tspString);
+            System.out.println(SEMILLA + "," + tsp.getCost().getCost());
 
             long endTime = System.currentTimeMillis();
             long elapsedTime = endTime - startTime;
             double elapsedTimeInMinutes = ((double) elapsedTime / (1000 * 60)) * 60;
 
-            System.out.println("Tiempo transcurrido: " + Math.ceil(elapsedTimeInMinutes) + " segundos");
+           // System.out.println("Tiempo transcurrido: " + Math.ceil(elapsedTimeInMinutes) + " segundos");
 
-            String outputFileName = "solution/solution-" + tsp.getCitiesPath().length + ".tsp";
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
-                writer.write(tspString);
-            }
+            //String outputFileName = "solution/solution-" + tsp.getCitiesPath().length + ".tsp";
+            //try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
+            //    writer.write(tspString);
+            //}
 
         } catch (IOException e) {
             System.err.println("Error al leer el archivo: " + e.getMessage());
