@@ -51,6 +51,7 @@ public class ThresholdAccepting {
             if(solution.getCost().getCost() < anteriorCosto + temperature ){
                 c++;
                 r += solution.getCost().getCost();
+                System.out.println(solution.getCost().getCost());
             } else{
                 solution.unSwap();
             }
@@ -63,6 +64,21 @@ public class ThresholdAccepting {
         return new LoteResponse(r/L, solution);
     }
 
+    public static Solution barrido(Solution solution){
+        //System.out.println("------" + solution.toString());
+        int length = solution.getCitiesPath().length;
+        for(int i = 0; i < length - 1; i++){
+            for(int j = i+1; j < length -1; j++){
+                double anteriorCosto = solution.getCost().getCost();
+                solution.swapBarrido(i, j);
+
+                if(anteriorCosto < solution.getCost().getCost())
+                    solution.swapBarrido(i, j);           
+            }
+        }
+        return solution;
+    }
+
     public static Solution aceptacionPorUmbrales(double temperature, Solution solution){
         double p = 0.0;
 
@@ -70,8 +86,8 @@ public class ThresholdAccepting {
         bestSolution = solution.copy();
         int i = 0;
 
-        String costo = String.format("%20.20f", solution.getCost().getCost());
-        String temperatura = String.format("%20.20f", (new BigDecimal(temperature)));
+        //String costo = String.format("%20.20f", solution.getCost().getCost());
+        //String temperatura = String.format("%20.20f", (new BigDecimal(temperature)));
         //System.out.println(String.format("Lote: %4d      Cost: %40s      Temperature: %40s     Feasible: %b", 
         //i, costo, temperatura, solution.getFeasible()));
 
@@ -95,8 +111,8 @@ public class ThresholdAccepting {
             }
             temperature = PHI * temperature;
             i++;
-            costo = String.format("%20.20f", solution.getCost().getCost());
-            temperatura = String.format("%20.20f", (new BigDecimal(temperature)));
+            //costo = String.format("%20.20f", solution.getCost().getCost());
+            //temperatura = String.format("%20.20f", (new BigDecimal(temperature)));
             //System.out.println(String.format("Lote: %4d      Cost: %40s      Temperature: %40s     Feasible: %b", 
             //i, costo, temperatura, solution.getFeasible()));
         }
@@ -188,24 +204,24 @@ public class ThresholdAccepting {
 
             double T = temperaturaInicial(tsp, TEMPERATURA_INICIAL, P);
 
-           // System.out.println("Temperatura inicial calculada: " + (new BigDecimal(T)).toPlainString());
+            //System.out.println("Temperatura inicial calculada: " + (new BigDecimal(T)).toPlainString());
             //System.out.println("------------------------------ Inicia heuristica -----------------------");
             tsp = aceptacionPorUmbrales(T, tsp);
 
             String tspString = tsp.toString();
 
-            System.out.println(SEMILLA + "," + tsp.getCost().getCost());
+            //System.out.println(SEMILLA + "," + tsp.getCost().getCost());
 
             long endTime = System.currentTimeMillis();
             long elapsedTime = endTime - startTime;
             double elapsedTimeInMinutes = ((double) elapsedTime / (1000 * 60)) * 60;
 
-           // System.out.println("Tiempo transcurrido: " + Math.ceil(elapsedTimeInMinutes) + " segundos");
+            //System.out.println("Tiempo transcurrido: " + Math.ceil(elapsedTimeInMinutes) + " segundos");
 
-            //String outputFileName = "solution/solution-" + tsp.getCitiesPath().length + ".tsp";
-            //try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
-            //    writer.write(tspString);
-            //}
+            String outputFileName = "solution/solution-" + tsp.getCitiesPath().length + ".tsp";
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
+                writer.write(tspString);
+            }
 
         } catch (IOException e) {
             System.err.println("Error al leer el archivo: " + e.getMessage());

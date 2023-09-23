@@ -151,21 +151,27 @@ public class Solution {
             index2 = random.nextInt(citiesPath.length);
         }
 
-        double sum = this.modifyCost(index1, index2);
         City aux = this.citiesPath[index1];
         this.citiesPath[index1] = this.citiesPath[index2];
         this.citiesPath[index2] = aux;
 
-        this.cost.sum(sum);
+        this.costFunction();
     }
 
     public void unSwap(){
-        double sum = this.modifyCost(index1, index2);
         City aux = this.citiesPath[index1];
         this.citiesPath[index1] = this.citiesPath[index2];
         this.citiesPath[index2] = aux;
 
-        this.cost.sum(sum);
+        this.costFunction();
+    }
+
+    public void swapBarrido(int index1, int index2){
+        City aux = this.citiesPath[index1];
+        this.citiesPath[index1] = this.citiesPath[index2];
+        this.citiesPath[index2] = aux;
+
+        this.costFunction();
     }
     
     public double modifyCost(int i, int j) {
