@@ -5,8 +5,8 @@ JAR_FILE="target/TravellingSalesmanProblem-jar-with-dependencies.jar"
 INPUT_FILE="inputs/input-150.tsp"
 
 # Rango de semillas que deseas probar
-SEMILLA_INICIAL=1
-SEMILLA_FINAL=1000
+SEMILLA_INICIAL=464
+SEMILLA_FINAL=10000
 
 # Nombre del archivo de salida
 OUTPUT_FILE="salida9-150.csv"

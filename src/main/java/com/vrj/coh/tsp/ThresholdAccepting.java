@@ -51,7 +51,6 @@ public class ThresholdAccepting {
             if(solution.getCost().getCost() < anteriorCosto + temperature ){
                 c++;
                 r += solution.getCost().getCost();
-                System.out.println(solution.getCost().getCost());
             } else{
                 solution.unSwap();
             }
@@ -210,7 +209,7 @@ public class ThresholdAccepting {
 
             String tspString = tsp.toString();
 
-            //System.out.println(SEMILLA + "," + tsp.getCost().getCost());
+            System.out.println(SEMILLA + "," + tsp.getCost().getCost());
 
             long endTime = System.currentTimeMillis();
             long elapsedTime = endTime - startTime;
