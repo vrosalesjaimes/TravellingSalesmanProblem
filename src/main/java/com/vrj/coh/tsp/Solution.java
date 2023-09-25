@@ -1,7 +1,8 @@
 package com.vrj.coh.tsp;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,8 +13,11 @@ import java.util.Random;
 import static com.vrj.coh.tsp.City.findById;
 import static com.vrj.coh.tsp.Connection.findByCity1AndCity2;
 
-
-@Data
+/**
+ * This class represents a solution for the Traveling Salesman Problem (TSP).
+ */
+@Getter
+@Setter
 @NoArgsConstructor
 public class Solution {
 
@@ -36,12 +40,12 @@ public class Solution {
     private int index1 = 0;
     private int index2 = 0;
 
-
-    public boolean getFeasible(){
-        return this.feasible;
-    }
-
-     /* Initializes an object of type solution. */
+    /**
+     * Initializes an object of type Solution.
+     * 
+     * @param idsCitiesPath An array of city IDs representing the path.
+     * @param seed The random seed for generating solutions.
+     */
     public Solution(int[] idsCitiesPath, long seed){
         this.citiesPath = toArrayCities(idsCitiesPath);
         this.normalizer = 0;
@@ -54,9 +58,10 @@ public class Solution {
     }
 
     /**
-     * Converts an array of city ids to one of cities
-     * @param idsArrayCities array of the id's cities.
-     * @return array of cities with id in idsArraysCities.
+     * Converts an array of city IDs to an array of City objects.
+     * 
+     * @param idsArrayCities An array of city IDs.
+     * @return An array of City objects.
      */
     public City[] toArrayCities(int[] idsArrayCities){
         City[] cities = new City[idsArrayCities.length];
@@ -68,8 +73,9 @@ public class Solution {
     }
 
     /**
-     * Converts an array of cities to one of city ids.
-     * @return array of city ids.
+     * Converts the array of cities to an array of city IDs.
+     * 
+     * @return An array of city IDs.
      */
     public int[] toArrayInteger(){
         int[] idsCities = new int[citiesPath.length];
@@ -81,6 +87,11 @@ public class Solution {
         return idsCities;
     }
 
+    /**
+     * Gets a list of distances between cities in the path.
+     * 
+     * @return A list of distances.
+     */
     public List<Double> getDistances(){
         List<Double> distances = new ArrayList<>();
 
@@ -97,7 +108,7 @@ public class Solution {
     /**
      * Calculate the heaviest route in citiesPath.
      */
-    public void calculeteNormalizer(){
+    public void calculateNormalizer(){
         List<Double> distances = getDistances();
 
         Collections.sort(distances, Collections.reverseOrder());
@@ -105,16 +116,14 @@ public class Solution {
         for(int i = 0; i < citiesPath.length - 1; i++){
             this.normalizer += distances.get(i);
         }
-        //System.out.println(String.format("Normalizador: %.10f", this.normalizer));
         calculateMaximum(distances);
     }
 
     /**
-     * Find the longest distance between two cities in citiesPath;
+     * Find the longest distance between two cities in citiesPath.
      */
     public void calculateMaximum(List<Double> distances){
         this.maximum = distances.get(0);
-        //System.out.println(String.format("Máximo: %.10f", this.maximum));
     }
     
     /**
@@ -132,13 +141,15 @@ public class Solution {
         this.isFeasible();
     }
     
+    /**
+     * Checks if the solution is feasible.
+     */
     public void isFeasible(){
         if(this.cost.getCost() < 1.0 )
             this.feasible = true;
         else
             this.feasible = false;
     }
-    
 
     /**
      * Swap two cities in citiesPath.
@@ -158,6 +169,20 @@ public class Solution {
         this.costFunction();
     }
 
+    /**
+     * Swap two cities in citiesPath.
+     */
+    public void swap(int index1, int index2){
+        City aux = this.citiesPath[index1];
+        this.citiesPath[index1] = this.citiesPath[index2];
+        this.citiesPath[index2] = aux;
+
+        this.costFunction();
+    }
+
+    /**
+     * Undo the swap operation.
+     */
     public void unSwap(){
         City aux = this.citiesPath[index1];
         this.citiesPath[index1] = this.citiesPath[index2];
@@ -166,56 +191,29 @@ public class Solution {
         this.costFunction();
     }
 
-    public void swapBarrido(int index1, int index2){
-        City aux = this.citiesPath[index1];
-        this.citiesPath[index1] = this.citiesPath[index2];
-        this.citiesPath[index2] = aux;
-
-        this.costFunction();
-    }
-    
-    public double modifyCost(int i, int j) {
-        int n = citiesPath.length - 1;
-        City[] path = citiesPath;
-    
-        double newCost = 0.0;
-    
-        if (Math.abs(i - j) == 1) {
-            int ii = Math.min(i, j);
-            int jj = Math.max(i, j);
-            if (ii != 0) {
-                newCost -= adjacencyMatrix[path[ii - 1].getId()][path[ii].getId()];
-                newCost += adjacencyMatrix[path[ii - 1].getId()][path[jj].getId()];
-            }
-            if (jj != n) {
-                newCost -= adjacencyMatrix[path[jj].getId()][path[jj + 1].getId()];
-                newCost += adjacencyMatrix[path[ii].getId()][path[jj + 1].getId()];
-            }
-        } else {
-            if (i != 0) {
-                newCost -= adjacencyMatrix[path[i - 1].getId()][path[i].getId()];
-                newCost += adjacencyMatrix[path[i - 1].getId()][path[j].getId()];
-            }
-            if (i != n) {
-                newCost -= adjacencyMatrix[path[i].getId()][path[i + 1].getId()];
-                newCost += adjacencyMatrix[path[j].getId()][path[i + 1].getId()];
-            }
-            if (j != 0) {
-                newCost -= adjacencyMatrix[path[j - 1].getId()][path[j].getId()];
-                newCost += adjacencyMatrix[path[j - 1].getId()][path[i].getId()];
-            }
-            if (j != n) {
-                newCost -= adjacencyMatrix[path[j].getId()][path[j + 1].getId()];
-                newCost += adjacencyMatrix[path[i].getId()][path[j + 1].getId()];
+    public boolean swept(){
+        boolean thereIsLess = false;
+        System.out.println("-------Barrido");
+        for(int i = 0; i < citiesPath.length; i++){
+            for (int j = i+1; j < citiesPath.length; j++){
+                double bestCost = this.cost.getCost();
+                this.swap(i, j);
+                if(bestCost <= this.getCost().getCost()){
+                    this.swap(i, j);
+                } else{
+                    thereIsLess = true;
+                    return thereIsLess;
+                }
             }
         }
-        return newCost;
+
+        return thereIsLess;
     }
-    
-    
 
     /**
      * Replaces null entries with 0 in the adjacency matrix.
+     * 
+     * @param adjacencyMatrix The adjacency matrix to complete.
      */
     public void completeAdjacencyMatrix(Double[][] adjacencyMatrix){
         for(int i = 0; i < MAX_CITIES+1; i++){
@@ -227,6 +225,11 @@ public class Solution {
         }
     }
 
+    /**
+     * Creates a copy of the current solution.
+     * 
+     * @return A copy of the current solution.
+     */
     public Solution copy(){
         Solution solution = new Solution();
         solution.setAdjacencyMatrix(this.adjacencyMatrix);
@@ -239,8 +242,13 @@ public class Solution {
         return solution;
     }
 
+    /**
+     * Fills the adjacency matrix with distances between cities in the path.
+     * 
+     * @return The filled adjacency matrix.
+     */
     public Double[][] fillAdjacencyMatrix(){
-        calculeteNormalizer();
+        calculateNormalizer();
         Double[][] adjacencyMatrix = new Double[MAX_CITIES+1][MAX_CITIES+1];
         for(int i = 0; i < citiesPath.length; i++){
             for(int j = 0; j < citiesPath.length; j++){
@@ -278,7 +286,7 @@ public class Solution {
                 .replace(" ", "");
 
         double costdouble = cost.getCost(); 
-        String feasibleString = feasible ? "Yes" : "No";
+        String feasibleString = feasible ? "YES" : "NO";
 
         return "Path: " + citiesPathString + "\nMaximun: " + maximum + "\nNormalizer: " + normalizer +
                "\nEvaluation: " + costdouble + "\nFeasible: " + feasibleString;

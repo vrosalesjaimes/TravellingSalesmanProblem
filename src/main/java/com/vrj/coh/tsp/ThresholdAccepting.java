@@ -5,50 +5,65 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * This class implements the Threshold Accepting algorithm for solving a Traveling Salesman Problem (TSP).
+ */
 public class ThresholdAccepting {
 
-    private static Integer SEMILLA = null; 
-    private final static int TEMPERATURA_INICIAL = 1;
+    private static Integer SEED = null; 
+    private final static int INITIAL_TEMPERATURE = 1;
     private final static double EPSILONP = 0.1;
     private final static double EPSILON = 0.0001;
     private final static double PHI = 0.9;
     private final static double P = 0.85;
     private static Solution bestSolution = null;
 
-    public static int[] permutarArreglo(int[] arreglo) {
-        int n = arreglo.length;
-        int[] permutacion = arreglo.clone();
-        Random rand = new Random(SEMILLA);
+    /**
+     * Permutes an array randomly.
+     * 
+     * @param array The array to be permuted.
+     * @return The permuted array.
+     */
+    public static int[] permuteArray(int[] array) {
+        int n = array.length;
+        int[] permutation = array.clone();
+        Random rand = new Random(SEED);
 
         for (int i = n - 1; i > 0; i--) {
             int j = rand.nextInt(i + 1);
-            int temp = permutacion[i];
-            permutacion[i] = permutacion[j];
-            permutacion[j] = temp;
+            int temp = permutation[i];
+            permutation[i] = permutation[j];
+            permutation[j] = temp;
         }
 
-        return permutacion;
+        return permutation;
     }
 
-    public static LoteResponse calculaLote(double temperature, Solution solution){
+    /**
+     * Calculates a batch of solutions at a given temperature.
+     * 
+     * @param temperature The current temperature.
+     * @param solution The current solution.
+     * @return The batch response.
+     */
+    public static LoteResponse calculateBatch(double temperature, Solution solution){
 
         int c = 0;
         double r = 0.0;
         int L = 2000;
         int limit = 0;
-        double anteriorCosto = 0;
+        double previousCost = 0;
 
         while (c < L){
 
-            anteriorCosto = solution.getCost().getCost();
+            previousCost = solution.getCost().getCost();
             solution.swap();
 
-            if(solution.getCost().getCost() < anteriorCosto + temperature ){
+            if(solution.getCost().getCost() < previousCost + temperature ){
                 c++;
                 r += solution.getCost().getCost();
             } else{
@@ -63,39 +78,25 @@ public class ThresholdAccepting {
         return new LoteResponse(r/L, solution);
     }
 
-    public static Solution barrido(Solution solution){
-        //System.out.println("------" + solution.toString());
-        int length = solution.getCitiesPath().length;
-        for(int i = 0; i < length - 1; i++){
-            for(int j = i+1; j < length -1; j++){
-                double anteriorCosto = solution.getCost().getCost();
-                solution.swapBarrido(i, j);
-
-                if(anteriorCosto < solution.getCost().getCost())
-                    solution.swapBarrido(i, j);           
-            }
-        }
-        return solution;
-    }
-
-    public static Solution aceptacionPorUmbrales(double temperature, Solution solution){
+    /**
+     * Runs the Threshold Acceptance algorithm.
+     * 
+     * @param temperature The initial temperature.
+     * @param solution The initial solution.
+     * @return The best solution found.
+     */
+    public static Solution thresholdAcceptance(double temperature, Solution solution){
         double p = 0.0;
 
         LoteResponse minSolution = null;
         bestSolution = solution.copy();
-        int i = 0;
-
-        //String costo = String.format("%20.20f", solution.getCost().getCost());
-        //String temperatura = String.format("%20.20f", (new BigDecimal(temperature)));
-        //System.out.println(String.format("Lote: %4d      Cost: %40s      Temperature: %40s     Feasible: %b", 
-        //i, costo, temperatura, solution.getFeasible()));
 
         while (temperature > EPSILON){
 
             double q = Double.MAX_VALUE;
             while (p <= q){
                 q = p;
-                minSolution = calculaLote(temperature, solution);
+                minSolution = calculateBatch(temperature, solution);
                 if (minSolution.getSolution() != null){
                     p  = minSolution.getPromedio();
 
@@ -109,19 +110,23 @@ public class ThresholdAccepting {
                 }
             }
             temperature = PHI * temperature;
-            i++;
-            //costo = String.format("%20.20f", solution.getCost().getCost());
-            //temperatura = String.format("%20.20f", (new BigDecimal(temperature)));
-            //System.out.println(String.format("Lote: %4d      Cost: %40s      Temperature: %40s     Feasible: %b", 
-            //i, costo, temperatura, solution.getFeasible()));
         }
+
+        while(bestSolution.swept());
         return bestSolution;
     }
 
-    public static double temperaturaInicial(Solution solution, double T, double P){
-        double p = porcentajeAceptados(solution, T);
+    /**
+     * Calculates the initial temperature.
+     * 
+     * @param solution The initial solution.
+     * @param T The initial temperature.
+     * @param P The target acceptance rate.
+     * @return The calculated initial temperature.
+     */
+    public static double initialTemperature(Solution solution, double T, double P){
+        double p = acceptancePercentage(solution, T);
         double T1, T2 = 0;
-
 
         if (Math.abs(P - p) < EPSILONP){
             return T;
@@ -130,24 +135,30 @@ public class ThresholdAccepting {
         if (p < P){
             while (p < P){
                 T = 2 * T;
-                p = porcentajeAceptados(solution, T);
+                p = acceptancePercentage(solution, T);
             }
             T1 = T/2;
             T2 = T;
         } else {
             while (p > P){
                 T = T/2;
-                p = porcentajeAceptados(solution, T);
+                p = acceptancePercentage(solution, T);
             }
             T1 = T;
             T2 = 2 * T;
         }
 
-
-        return busquedaBinaria(solution, T1, T2, P);
+        return binarySearch(solution, T1, T2, P);
     }
 
-    public static double porcentajeAceptados(Solution solution, double temperature){
+    /**
+     * Calculates the acceptance percentage.
+     * 
+     * @param solution The solution to evaluate.
+     * @param temperature The current temperature.
+     * @return The acceptance percentage.
+     */
+    public static double acceptancePercentage(Solution solution, double temperature){
         int c = 0;
         int N = 10;
 
@@ -163,59 +174,60 @@ public class ThresholdAccepting {
         return c/N;
     }
 
-    public static double busquedaBinaria(Solution solution, double t1, double t2, double P){
+    /**
+     * Performs a binary search to find the best temperature.
+     * 
+     * @param solution The solution to evaluate.
+     * @param t1 The lower bound of the search range.
+     * @param t2 The upper bound of the search range.
+     * @param P The target acceptance rate.
+     * @return The best temperature.
+     */
+    public static double binarySearch(Solution solution, double t1, double t2, double P){
         double t = (t1 + t2)/2;
         
         if (t2 - t1 < EPSILONP){
             return t;
         }
         
-        double p = porcentajeAceptados(solution, t);
+        double p = acceptancePercentage(solution, t);
 
         if (Math.abs(P - p) < EPSILONP){
             return t;
         }
         if (p > P)
-            return busquedaBinaria(solution, t1, t, P);
+            return binarySearch(solution, t1, t, P);
         else
-            return busquedaBinaria(solution, t, t2, P);
+            return binarySearch(solution, t, t2, P);
     }
 
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.out.println("Uso: java TuClase <nombre_archivo> <semilla>");
-         return;
+            System.out.println("Usage: java YourClass <filename> <seed>");
+            return;
         }
 
-            String archivo = args[0];
-            SEMILLA = Integer.valueOf(args[1]);
+        String filename = args[0];
+        SEED = Integer.valueOf(args[1]);
 
         try {
-            List<Integer> idCitiesList = leerArchivo(archivo);
+            List<Integer> idCitiesList = readFile(filename);
             int[] idCitiesPath = new int[idCitiesList.size()];
             for (int i = 0; i < idCitiesList.size(); i++) {
                 idCitiesPath[i] = idCitiesList.get(i);
             }
 
-            long startTime = System.currentTimeMillis();
-            int[] permutacion = permutarArreglo(idCitiesPath);
-            Solution tsp = new Solution(permutacion, SEMILLA);
+            int[] permutation = permuteArray(idCitiesPath);
+            Solution tsp = new Solution(permutation, SEED);
 
-            double T = temperaturaInicial(tsp, TEMPERATURA_INICIAL, P);
+            double T = initialTemperature(tsp, INITIAL_TEMPERATURE, P);
 
-            //System.out.println("Temperatura inicial calculada: " + (new BigDecimal(T)).toPlainString());
-            //System.out.println("------------------------------ Inicia heuristica -----------------------");
-            tsp = aceptacionPorUmbrales(T, tsp);
+            tsp = thresholdAcceptance(T, tsp);
 
             String tspString = tsp.toString();
 
-            System.out.println(SEMILLA + "," + tsp.getCost().getCost());
+            System.out.println(tspString);
 
-            long endTime = System.currentTimeMillis();
-            long elapsedTime = endTime - startTime;
-            double elapsedTimeInMinutes = ((double) elapsedTime / (1000 * 60)) * 60;
-
-            //System.out.println("Tiempo transcurrido: " + Math.ceil(elapsedTimeInMinutes) + " segundos");
 
             String outputFileName = "solution/solution-" + tsp.getCitiesPath().length + ".tsp";
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
@@ -223,18 +235,18 @@ public class ThresholdAccepting {
             }
 
         } catch (IOException e) {
-            System.err.println("Error al leer el archivo: " + e.getMessage());
+            System.err.println("Error reading the file: " + e.getMessage());
         }
     }
 
-    private static List<Integer> leerArchivo(String archivo) throws IOException {
+    private static List<Integer> readFile(String filename) throws IOException {
         List<Integer> idCitiesList = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
-            String linea;
-            while ((linea = br.readLine()) != null) {
-                String[] elementos = linea.split(",");
-                for (String elemento : elementos) {
-                    idCitiesList.add(Integer.parseInt(elemento.trim()));
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] elements = line.split(",");
+                for (String element : elements) {
+                    idCitiesList.add(Integer.parseInt(element.trim()));
                 }
             }
         }
