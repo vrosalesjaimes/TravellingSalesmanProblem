@@ -229,7 +229,7 @@ public class ThresholdAccepting {
             System.out.println(tspString);
 
 
-            String outputFileName = "solution/solution-" + tsp.getCitiesPath().length + ".tsp";
+            String outputFileName = "solution-" + tsp.getCitiesPath().length + ".tsp";
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
                 writer.write(tspString);
             }
