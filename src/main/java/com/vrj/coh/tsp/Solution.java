@@ -193,7 +193,6 @@ public class Solution {
 
     public boolean swept(){
         boolean thereIsLess = false;
-        System.out.println("-------Barrido");
         for(int i = 0; i < citiesPath.length; i++){
             for (int j = i+1; j < citiesPath.length; j++){
                 double bestCost = this.cost.getCost();

@@ -50,7 +50,7 @@ public class ThresholdAccepting {
      * @param solution The current solution.
      * @return The batch response.
      */
-    public static LoteResponse calculateBatch(double temperature, Solution solution){
+    public static LotResponse calculateLot(double temperature, Solution solution){
 
         int c = 0;
         double r = 0.0;
@@ -75,7 +75,7 @@ public class ThresholdAccepting {
                 break;
             }
         }
-        return new LoteResponse(r/L, solution);
+        return new LotResponse(r/L, solution);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ThresholdAccepting {
     public static Solution thresholdAcceptance(double temperature, Solution solution){
         double p = 0.0;
 
-        LoteResponse minSolution = null;
+        LotResponse minSolution = null;
         bestSolution = solution.copy();
 
         while (temperature > EPSILON){
@@ -96,7 +96,7 @@ public class ThresholdAccepting {
             double q = Double.MAX_VALUE;
             while (p <= q){
                 q = p;
-                minSolution = calculateBatch(temperature, solution);
+                minSolution = calculateLot(temperature, solution);
                 if (minSolution.getSolution() != null){
                     p  = minSolution.getPromedio();
 
@@ -225,9 +225,6 @@ public class ThresholdAccepting {
             tsp = thresholdAcceptance(T, tsp);
 
             String tspString = tsp.toString();
-
-            System.out.println(tspString);
-
 
             String outputFileName = "solution-" + tsp.getCitiesPath().length + ".tsp";
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
