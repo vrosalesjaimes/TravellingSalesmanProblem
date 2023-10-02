@@ -33,3 +33,13 @@ build/
 
 # Miscellaneous
 .DS_Store
+
+# Tex files
+reporte/*.aux
+reporte/*.bbl
+reporte/*.blg
+reporte/*.log
+reporte/*.out
+reporte/*.toc
+reporte/*.synctex.gz
+reporte/*.pdf
