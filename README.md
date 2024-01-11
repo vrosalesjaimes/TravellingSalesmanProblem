@@ -23,6 +23,6 @@ java -jar target/*.jar <Archivo> <Semilla>
 Por ejemplo
 
 ```bash
-java -jar target/*.jar inputs/input-40.tsp 5123 
-java -jar target/*.jar inputs/input-150.tsp 82 
+java -jar target/TravellingSalesmanProblem-jar-with-dependencies.jar inputs/input-40.tsp 5123 
+java -jar target/TravellingSalesmanProblem-jar-with-dependencies.jar inputs/input-150.tsp 82 
 ```
