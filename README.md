@@ -17,7 +17,7 @@ El sistema recibe dos parametros:
 
 Se ejecuta de la siguiente forma:
 ```bash
-java -jar target/*.jar <Archivo> <Semilla>
+java -jar target/TravellingSalesmanProblem-jar-with-dependencies.jar <Archivo> <Semilla>
 ```
 
 Por ejemplo
